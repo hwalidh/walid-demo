@@ -8,17 +8,26 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.walid.demo.country_city_service.exception.dto.ErrorResponse;
+
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<Map<String, Object>> handleNotFound(NotFoundException ex) {
+  @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFound(
+            NotFoundException ex,
+            HttpServletRequest request
+    ) {
 
-        Map<String, Object> error = new HashMap<>();
-        error.put("status", 404);
-        error.put("error", "NOT_FOUND");
-        error.put("message", ex.getMessage());
-        error.put("timestamp", System.currentTimeMillis());
+        ErrorResponse error = new ErrorResponse(
+                404,
+                "NOT_FOUND",
+                ex.getMessage(),
+                request.getRequestURI(),
+                System.currentTimeMillis()
+        );
 
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
