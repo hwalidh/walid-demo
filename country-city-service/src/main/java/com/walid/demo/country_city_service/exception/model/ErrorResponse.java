@@ -9,7 +9,7 @@ public record ErrorResponse(
     int status ,
 
     @Schema(example = "404") 
-    String error,
+    ErrorCode error,
 
     @Schema(example = "City not found") 
     String message,
@@ -18,5 +18,9 @@ public record ErrorResponse(
     String path,
 
     @Schema(example = "1719050000000") 
-    long timestamp
-) {}
+    long timestamp,
+
+    @Schema(example = "a3f1c9d2-xxxx-xxxx")
+    String correlationId
+) {
+}

@@ -1,0 +1,50 @@
+package com.walid.demo.country_city_service.exception;
+
+@WebMvcTest(CityController.class)
+class GlobalExceptionHandlerTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @MockBean
+    private CityService cityService;
+
+    // ================= 404 =================
+    @Test
+    void shouldReturn404() throws Exception {
+
+        when(cityService.getCityById(1L))
+                .thenThrow(new NotFoundException("City not found"));
+
+        mockMvc.perform(get("/cities/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.error").value("NOT_FOUND"))
+                .andExpect(jsonPath("$.message").value("City not found"))
+                .andExpect(jsonPath("$.correlationId").exists());
+    }
+
+    // ================= 400 =================
+    @Test
+    void shouldReturn400() throws Exception {
+
+        when(cityService.getCityById(1L))
+                .thenThrow(new BadRequestException("Invalid city id"));
+
+        mockMvc.perform(get("/cities/1"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.message").value("Invalid city id"));
+    }
+
+    // ================= 500 =================
+    @Test
+    void shouldReturn500() throws Exception {
+
+        when(cityService.getCityById(1L))
+                .thenThrow(new RuntimeException("Unexpected error"));
+
+        mockMvc.perform(get("/cities/1"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.error").value("INTERNAL_ERROR"));
+    }
+}
