@@ -1,4 +1,4 @@
-package com.walid.demo.country_city_service.exception.dto;
+package com.walid.demo.country_city_service.exception;
 
 public class BadRequestException extends RuntimeException {
     public BadRequestException(String message) {

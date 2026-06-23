@@ -1,4 +1,4 @@
-package com.walid.demo.country_city_service.exception.dto;
+package com.walid.demo.country_city_service.exception.model;
 
 public enum ErrorCode {
     NOT_FOUND,
@@ -6,4 +6,3 @@ public enum ErrorCode {
     VALIDATION_ERROR,
     INTERNAL_ERROR
 }
-

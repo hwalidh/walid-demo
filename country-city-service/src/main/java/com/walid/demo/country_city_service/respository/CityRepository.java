@@ -6,7 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.walid.demo.country_city_service.model.City;
 
-
 public interface CityRepository extends JpaRepository<City, Long> {
     Page<City> findByCountryId(Long countryId, Pageable pageable);
 
