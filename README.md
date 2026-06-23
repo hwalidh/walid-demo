@@ -13,9 +13,38 @@ It demonstrates:
 
 ---
 
+# 🛠️ Prerequisites
+
+Before running the project, ensure you have the following tools installed:
+* **Java 21**
+* **Maven 3.9+**
+* **Git**
+* **Docker & Docker Compose** (required for the PostgreSQL database)
+* **Postman** (API testing tools)
+
+---
+
+## 💾 Database Setup
+
+This project uses **PostgreSQL**. A Docker Compose file is provided to spin up the database locally.
+
+* **Start the database:**
+    ```bash
+    docker compose up -d
+    ```
+* **Stop the database:**
+    ```bash
+    docker compose down
+    ```
+
+---
+
 # 🧩 Architecture
 
-Client ↓ API Gateway (8085) ↓ Country-City Service (8081) ↓ PostgreSQL (there is an docker-compose file to create)
+Client -> API Gateway (8085) -> Country-City Service (8081) -> PostgreSQL
+Or
+Client -> Country-City Service (8081) -> PostgreSQL
+
 ---
 
 # 🚀 Services
@@ -41,6 +70,22 @@ Client ↓ API Gateway (8085) ↓ Country-City Service (8081) ↓ Po
 - GET /cities/{id}
 
 ---
+
+# API Testing & Collections
+
+Two Postman/Bruno collections are available in the project to test the endpoints:
+
+Direct Service Collection: Calls Country City Service directly via port 8081.
+
+Gateway Collection: Routes requests through the API Gateway via port 8085.
+
+Main Endpoints
+
+GET /countries
+
+GET /countries/{countryId}/cities?page=0&size=10
+
+GET /cities/{cityId}
 
 # 🩺 Health Monitoring
 
