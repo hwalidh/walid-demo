@@ -1,0 +1,101 @@
+# Country City Service
+
+Core microservice handling countries and cities data.
+
+---
+
+# Configuration
+
+- Port: 8081
+- Spring Boot REST API
+- Connects to database (optional local setup)
+
+---
+
+#  Data Model
+
+## Country
+- id
+- name
+
+## City
+- id
+- name
+- countryId
+- population
+- description
+
+---
+
+# 📡 API Endpoints (via Gateway)
+
+## Countries
+
+- GET /countries
+
+---
+
+## Cities by Country (Pagination)
+
+- GET /countries/{countryId}/cities?page=0&size=10
+
+---
+
+## City Details
+
+- GET /cities/{cityId}
+
+---
+
+# 🧠 Features
+
+- Pagination support
+- DTO mapping
+- Service layer architecture
+- Repository abstraction
+
+---
+
+# ❌ Error Handling
+
+Global exception handling:
+
+- 404 Not Found
+- 400 Validation errors
+- 500 Internal server errors
+
+Response format includes:
+
+- status
+- error code
+- message
+- path
+- timestamp
+- correlationId
+
+---
+
+# 📖 Swagger
+
+- http://localhost:8081/swagger-ui/index.html
+
+---
+
+# 🧪 Testing
+
+Run:
+
+bash
+mvn test
+Includes:
+* Service tests
+* Controller tests
+* Exception tests
+* Pagination tests
+
+🚀 Purpose
+This service demonstrates:
+* Clean architecture
+* REST API design
+* Microservice communication
+	•	Pagination handling

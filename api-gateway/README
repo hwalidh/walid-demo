@@ -1,0 +1,43 @@
+#  API Gateway
+
+Spring Cloud Gateway used as entry point for all microservices.
+
+---
+
+#  Configuration
+
+- Port: 8085
+- Routes requests to backend services
+
+---
+
+#  Routing
+
+Routes configured for:
+
+- /countries → Country-City Service
+- /cities → Country-City Service
+- /countries/{id}/cities → Country-City Service
+- /actuator/** → monitoring endpoints
+- /swagger-ui/** → API documentation
+- /v3/api-docs/** → OpenAPI spec
+
+---
+
+#  Health Aggregation
+
+Endpoint:
+
+- GET /health/all
+
+Returns:
+- Gateway status
+- Country-City service status
+
+---
+
+# 🚀 Responsibilities
+
+- Central routing
+- Request forwarding
+- Observability aggregation
