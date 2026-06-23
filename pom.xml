@@ -30,15 +30,12 @@
 		<java.version>21</java.version>
 	</properties>
 	<dependencies>
-<<<<<<< HEAD
-=======
 
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
->>>>>>> e5b3bab (feat: implement REST APIs with clean architecture (DTO, service layer, error handling))
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
