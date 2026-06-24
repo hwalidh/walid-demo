@@ -22,10 +22,15 @@ services:
   keycloak:
     image: quay.io/keycloak/keycloak:25.0.6
     container_name: keycloak
-    command: start-dev --import-realm
+    command: start-dev --import-realm --features=hostname:v1
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HOSTNAME: keycloak
+      KC_HOSTNAME_PORT: "8080"
+      KC_HOSTNAME_ADMIN: keycloak
+      KC_HOSTNAME_ADMIN_PORT: "8080"
+      KC_HOSTNAME_STRICT_HTTPS: "false"
     ports:
       - "8080:8080"
     volumes:
@@ -34,6 +39,11 @@ services:
       - backend-network
     depends_on:
       - postgres
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/realms/country-system" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
   country-city-service:
     build: ./country-city-service
@@ -42,6 +52,7 @@ services:
       - "8081:8081"
     environment:
       SERVER_PORT: "8081"
+      SPRING_PROFILES_ACTIVE: docker
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/countrydb
       SPRING_DATASOURCE_USERNAME: admin
       SPRING_DATASOURCE_PASSWORD: admin
@@ -61,7 +72,6 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: docker
       SERVER_PORT: "8085"
-      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/country-system
       SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
     depends_on:
       - country-city-service

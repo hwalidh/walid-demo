@@ -1,21 +1,30 @@
 {
     "realm": "country-system",
     "enabled": true,
-  
+    "roles": {
+      "realm": [
+        {
+          "name": "admin",
+          "description": "Administrator role"
+        },
+        {
+          "name": "user",
+          "description": "User role"
+        }
+      ]
+    },
     "clients": [
       {
         "clientId": "api-gateway",
         "enabled": true,
         "protocol": "openid-connect",
-  
         "publicClient": false,
         "serviceAccountsEnabled": true,
-  
         "standardFlowEnabled": false,
         "directAccessGrantsEnabled": false,
         "implicitFlowEnabled": false,
-  
-        "secret": "gateway-secret"
+        "secret": "gateway-secret",
+        "defaultRoles": ["admin", "user"]
       }
     ]
   }

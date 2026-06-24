@@ -25,7 +25,7 @@ public class HealthController {
     public Mono<Map<String, Object>> health() {
 
         return webClient.get()
-                .uri("http://localhost:8081/actuator/health")
+                .uri("http://country-city-service:8081/actuator/health")
                 .retrieve()
                 .bodyToMono(Map.class)
                 .map(sh -> {
