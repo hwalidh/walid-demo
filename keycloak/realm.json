@@ -1,0 +1,21 @@
+{
+    "realm": "country-system",
+    "enabled": true,
+  
+    "clients": [
+      {
+        "clientId": "api-gateway",
+        "enabled": true,
+        "protocol": "openid-connect",
+  
+        "publicClient": false,
+        "serviceAccountsEnabled": true,
+  
+        "standardFlowEnabled": false,
+        "directAccessGrantsEnabled": false,
+        "implicitFlowEnabled": false,
+  
+        "secret": "gateway-secret"
+      }
+    ]
+  }

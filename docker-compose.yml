@@ -1,13 +1,76 @@
-version: '3.8'
-
 services:
+
   postgres:
-    image: postgres:15
+    image: postgres:16
     container_name: country-db
-    restart: always
     environment:
+      POSTGRES_DB: countrydb
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: admin
-      POSTGRES_DB: countrydb
     ports:
       - "5432:5432"
+    networks:
+      - backend-network
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U admin -d countrydb" ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0.6
+    container_name: keycloak
+    command: start-dev --import-realm
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./keycloak/realm.json:/opt/keycloak/data/import/realm.json
+    networks:
+      - backend-network
+    depends_on:
+      - postgres
+
+  country-city-service:
+    build: ./country-city-service
+    container_name: country-city-service
+    ports:
+      - "8081:8081"
+    environment:
+      SERVER_PORT: "8081"
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/countrydb
+      SPRING_DATASOURCE_USERNAME: admin
+      SPRING_DATASOURCE_PASSWORD: admin
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - backend-network
+
+  api-gateway:
+    build: ./api-gateway
+    container_name: api-gateway
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SERVER_PORT: "8085"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/country-system
+      SPRING_MAIN_ALLOW_BEAN_DEFINITION_OVERRIDING: "true"
+    depends_on:
+      - country-city-service
+    networks:
+      - backend-network
+
+networks:
+  backend-network:
+    driver: bridge
+
+volumes:
+  postgres_data:

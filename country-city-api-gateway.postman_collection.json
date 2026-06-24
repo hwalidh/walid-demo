@@ -1,42 +1,60 @@
 {
   "info": {
-    "name": "Country City API - Gateway",
+    "name": "Country City API - OAuth2 Client Credentials",
+    "_postman_id": "country-city-001",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "item": [
     {
-      "name": "Get Countries",
+      "name": "1 - Get Keycloak Token",
       "request": {
-        "method": "GET",
-        "url": "http://localhost:8085/countries"
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/x-www-form-urlencoded"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/realms/country-system/protocol/openid-connect/token",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": [
+            "realms",
+            "country-system",
+            "protocol",
+            "openid-connect",
+            "token"
+          ]
+        },
+        "body": {
+          "mode": "urlencoded",
+          "urlencoded": [
+            { "key": "grant_type", "value": "client_credentials" },
+            { "key": "client_id", "value": "api-gateway" },
+            { "key": "client_secret", "value": "gateway-secret" }
+          ]
+        }
       }
     },
     {
-      "name": "Get Cities By Country",
+      "name": "2 - Get Countries (Gateway Secured)",
       "request": {
         "method": "GET",
-        "url": "http://localhost:8085/countries/1/cities?page=0&size=10"
-      }
-    },
-    {
-      "name": "Get City Details",
-      "request": {
-        "method": "GET",
-        "url": "http://localhost:8085/cities/1"
-      }
-    },
-    {
-      "name": "Gateway Health",
-      "request": {
-        "method": "GET",
-        "url": "http://localhost:8085/actuator/health"
-      }
-    },
-    {
-      "name": "Aggregated Health",
-      "request": {
-        "method": "GET",
-        "url": "http://localhost:8085/health/all"
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:8085/countries",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8085",
+          "path": ["countries"]
+        }
       }
     }
   ]
