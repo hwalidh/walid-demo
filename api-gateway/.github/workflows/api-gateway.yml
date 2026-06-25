@@ -1,0 +1,50 @@
+name: API Gateway CI/CD
+
+on:
+  push:
+    branches: [ main, master ]
+    paths:
+      - 'api-gateway/**' # 🎯 Ne se déclenche QUE si du code change dans ce dossier
+  pull_request:
+    branches: [ main, master ]
+    paths:
+      - 'api-gateway/**'
+
+jobs:
+  api-gateway-pipeline:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api-gateway
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
+      with:
+        java-version: '21'
+        distribution: 'temurin'
+        cache: 'maven'
+
+    - name: Run Gateway Tests
+      run: mvn clean test
+
+    - name: Log in to Docker Hub
+      if: github.event_name == 'push'
+      uses: docker/login-action@v3
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+    - name: Build and Push Gateway Image
+      if: github.event_name == 'push'
+      uses: docker/build-push-action@v5
+      with:
+        context: ./api-gateway
+        file: ./api-gateway/Dockerfile
+        push: true
+        tags: |
+          ${{ secrets.DOCKERHUB_USERNAME }}/api-gateway:latest
+          ${{ secrets.DOCKERHUB_USERNAME }}/api-gateway:${{ github.sha }}									
