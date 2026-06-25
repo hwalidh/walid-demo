@@ -41,9 +41,9 @@ services:
       - postgres
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/realms/country-system" ]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      interval: 10s
+      timeout: 10s
+      retries: 30
 
   country-city-service:
     build: ./country-city-service
@@ -58,8 +58,12 @@ services:
       SPRING_DATASOURCE_PASSWORD: admin
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: "true"
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_ISSUER_URI: http://keycloak:8080/realms/country-system
+      SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWK_SET_URI: http://keycloak:8080/realms/country-system/protocol/openid-connect/certs
     depends_on:
       postgres:
+        condition: service_healthy
+      keycloak:
         condition: service_healthy
     networks:
       - backend-network
