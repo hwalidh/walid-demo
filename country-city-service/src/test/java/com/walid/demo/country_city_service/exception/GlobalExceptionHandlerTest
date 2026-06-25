@@ -1,5 +1,19 @@
 package com.walid.demo.country_city_service.exception;
 
+import com.walid.demo.country_city_service.controller.CityController;
+import com.walid.demo.country_city_service.service.CityService;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
+
+// 💡 IMPORT REQUIS POUR SIMULER LE JETON SÉCURISÉ
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
 @WebMvcTest(CityController.class)
 class GlobalExceptionHandlerTest {
 
@@ -9,6 +23,15 @@ class GlobalExceptionHandlerTest {
     @MockBean
     private CityService cityService;
 
+    // ==========================================
+    // SECURITY
+    // ==========================================
+    @Test
+    void shouldReturn401WhenNoTokenProvidedForExceptionTesting() throws Exception {
+        mockMvc.perform(get("/cities/1"))
+                .andExpect(status().isUnauthorized());
+    }
+
     // ================= 404 =================
     @Test
     void shouldReturn404() throws Exception {
@@ -16,7 +39,7 @@ class GlobalExceptionHandlerTest {
         when(cityService.getCityById(1L))
                 .thenThrow(new NotFoundException("City not found"));
 
-        mockMvc.perform(get("/cities/1"))
+        mockMvc.perform(get("/cities/1").with(jwt())) // 🔐 Ajout du token
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.error").value("NOT_FOUND"))
                 .andExpect(jsonPath("$.message").value("City not found"))
@@ -30,7 +53,7 @@ class GlobalExceptionHandlerTest {
         when(cityService.getCityById(1L))
                 .thenThrow(new BadRequestException("Invalid city id"));
 
-        mockMvc.perform(get("/cities/1"))
+        mockMvc.perform(get("/cities/1").with(jwt())) // 🔐 Ajout du token
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.message").value("Invalid city id"));
@@ -43,7 +66,7 @@ class GlobalExceptionHandlerTest {
         when(cityService.getCityById(1L))
                 .thenThrow(new RuntimeException("Unexpected error"));
 
-        mockMvc.perform(get("/cities/1"))
+        mockMvc.perform(get("/cities/1").with(jwt())) // 🔐 Ajout du token
                 .andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.error").value("INTERNAL_ERROR"));
     }

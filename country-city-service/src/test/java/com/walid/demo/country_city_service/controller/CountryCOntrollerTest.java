@@ -10,6 +10,8 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+// 💡 IMPORT REQUIS POUR SIMULER LE JETON SÉCURISÉ
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.jwt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -24,6 +26,15 @@ class CountryControllerTest {
         @MockBean
         private CountryService service;
 
+        // ==========================================
+        // SECURITY
+        // ==========================================
+        @Test
+        void shouldReturn401WhenNoTokenProvided() throws Exception {
+                mockMvc.perform(get("/countries"))
+                                .andExpect(status().isUnauthorized());
+        }
+
         // =========================
         // 1. EMPTY LIST
         // =========================
@@ -32,7 +43,7 @@ class CountryControllerTest {
 
                 when(service.getAllCountries()).thenReturn(List.of());
 
-                mockMvc.perform(get("/countries"))
+                mockMvc.perform(get("/countries").with(jwt())) // 🔐 Ajout du token
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.length()").value(0));
 
@@ -48,7 +59,7 @@ class CountryControllerTest {
                 when(service.getAllCountries()).thenReturn(
                                 List.of(new CountryDto(1L, "France")));
 
-                mockMvc.perform(get("/countries"))
+                mockMvc.perform(get("/countries").with(jwt())) // 🔐 Ajout du token
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.length()").value(1))
                                 .andExpect(jsonPath("$[0].id").value(1))
@@ -68,7 +79,7 @@ class CountryControllerTest {
                                 new CountryDto(2L, "Germany"),
                                 new CountryDto(3L, "Spain")));
 
-                mockMvc.perform(get("/countries"))
+                mockMvc.perform(get("/countries").with(jwt())) // 🔐 Ajout du token
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$.length()").value(3))
                                 .andExpect(jsonPath("$[1].name").value("Germany"))
@@ -86,7 +97,7 @@ class CountryControllerTest {
                 when(service.getAllCountries()).thenReturn(
                                 List.of(new CountryDto(1L, "France")));
 
-                mockMvc.perform(get("/countries"))
+                mockMvc.perform(get("/countries").with(jwt())) // 🔐 Ajout du token
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$[0].id").exists())
                                 .andExpect(jsonPath("$[0].name").exists())
@@ -102,7 +113,7 @@ class CountryControllerTest {
                 when(service.getAllCountries()).thenReturn(
                                 List.of(new CountryDto(1L, "France")));
 
-                mockMvc.perform(get("/countries"))
+                mockMvc.perform(get("/countries").with(jwt())) // 🔐 Ajout du token
                                 .andExpect(status().isOk())
                                 .andExpect(jsonPath("$[0].name").isNotEmpty());
         }
