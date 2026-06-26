@@ -20,7 +20,10 @@ public class SecurityConfig {
                     "/v3/api-docs/**",
                     "/swagger-ui/**",
                     "/swagger-ui.html",
-                    "/webjars/**"
+                    "/webjars/**",
+                    "/actuator/prometheus",
+                    "/actuator/health",
+                    "/actuator/metrics"
                 ).permitAll()
                 // Tout le reste (vos contrôleurs pays/villes) reste sécurisé
                 .anyRequest().authenticated()
