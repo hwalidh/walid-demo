@@ -26,7 +26,7 @@ public class CountryController {
 
     @Operation(summary = "Get all countries")
     @ApiResponse(responseCode = "200", description = "List of countries")
-    @GetMapping({"", "/"})
+    @GetMapping
     public List<CountryDto> getCountries() {
         return service.getAllCountries();
     }
