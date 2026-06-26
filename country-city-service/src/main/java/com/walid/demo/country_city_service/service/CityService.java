@@ -1,0 +1,54 @@
+package com.walid.demo.country_city_service.service;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+
+import com.walid.demo.country_city_service.dto.CityDto;
+import com.walid.demo.country_city_service.exception.BadRequestException;
+import com.walid.demo.country_city_service.exception.NotFoundException;
+import com.walid.demo.country_city_service.model.City;
+import com.walid.demo.country_city_service.respository.CityRepository;
+
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class CityService {
+
+    private final CityRepository repo;
+
+    public Page<CityDto> getCitiesByCountry(Long countryId, Pageable pageable) {
+
+        if (countryId == null) {
+            throw new BadRequestException("CountryId is required");
+        }
+
+        if (pageable.getPageSize() > 100) {
+            throw new BadRequestException("Page size too large (max 100)");
+        }
+
+        return repo.findByCountryId(countryId, pageable)
+                .map(c -> new CityDto(
+                        c.getId(),
+                        c.getName(),
+                        c.getPopulation(),
+                        c.getDescription()));
+    }
+
+    public CityDto getCityById(Long id) {
+
+        if (id == null) {
+            throw new BadRequestException("City id is required");
+        }
+
+        City city = repo.findById(id)
+                .orElseThrow(() -> new NotFoundException("City not found: " + id));
+
+        return new CityDto(
+                city.getId(),
+                city.getName(),
+                city.getPopulation(),
+                city.getDescription());
+    }
+}

@@ -1,0 +1,79 @@
+{
+  "realm": "country-system",
+  "enabled": true,
+  "roles": {
+    "realm": [
+      {
+        "name": "admin",
+        "description": "Administrator role"
+      },
+      {
+        "name": "user",
+        "description": "User role"
+      }
+    ]
+  },
+  "users": [
+    {
+      "username": "testuser",
+      "enabled": true,
+      "email": "testuser@example.com",
+      "emailVerified": true,
+      "firstName": "Test",
+      "lastName": "User",
+      "credentials": [
+        {
+          "type": "password",
+          "value": "testuser123",
+          "temporary": false
+        }
+      ],
+      "realmRoles": [
+        "admin",
+        "user"
+      ]
+    }
+  ],
+  "clients": [
+    {
+      "clientId": "api-gateway",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
+      "implicitFlowEnabled": false,
+      "secret": "gateway-secret",
+      "defaultRoles": [
+        "admin",
+        "user"
+      ],
+      "webOrigins": [
+        "http://localhost:8085"
+      ]
+    },
+    {
+      "clientId": "swagger-ui",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+      "implicitFlowEnabled": false,
+      "redirectUris": [
+        "http://localhost:8085/swagger-ui/oauth2-redirect.html",
+        "http://localhost:8085/swagger-ui.html",
+        "http://localhost:8085/*"
+      ],
+      "webOrigins": [
+        "http://localhost:8085"
+      ],
+      "defaultRoles": [
+        "admin",
+        "user"
+      ]
+    }
+  ]
+}
