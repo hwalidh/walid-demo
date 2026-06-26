@@ -1,7 +1,7 @@
 services:
 
   postgres:
-    image: postgres:16
+    image: postgres:16-alpine
     container_name: country-db
     mem_limit: 1g
     environment:
@@ -24,7 +24,7 @@ services:
     image: quay.io/keycloak/keycloak:25.0.6
     container_name: keycloak
     mem_limit: 2g
-    command: start-dev --import-realm --features=hostname:v1
+    command: start-dev --import-realm --features=hostname:v1 --cache=local
     environment:
       KEYCLOAK_ADMIN: admin
       KEYCLOAK_ADMIN_PASSWORD: admin
@@ -33,6 +33,9 @@ services:
       KC_HOSTNAME_ADMIN: keycloak
       KC_HOSTNAME_ADMIN_PORT: "8080"
       KC_HOSTNAME_STRICT_HTTPS: "false"
+      KC_LOG_LEVEL: WARN
+      KC_METRICS_ENABLED: "false"
+      JAVA_OPTS_APPEND: "-Djava.awt.headless=true -XX:+UseStringDeduplication"
     ports:
       - "8080:8080"
     volumes:

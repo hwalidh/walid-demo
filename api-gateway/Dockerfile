@@ -7,15 +7,13 @@ COPY src ./src
 
 RUN mvn clean package -DskipTests
 
-FROM eclipse-temurin:21-jre
+FROM eclipse-temurin:21-jre-alpine
 
 WORKDIR /app
 
-RUN useradd -m appuser && chown appuser:appuser /app
+RUN addgroup -g 1000 appuser && adduser -D -u 1000 -G appuser appuser
 
-COPY --from=build /app/target/*.jar app.jar
-
-RUN chown appuser:appuser /app/app.jar
+COPY --from=build --chown=appuser:appuser /app/target/*.jar app.jar
 
 USER appuser
 
